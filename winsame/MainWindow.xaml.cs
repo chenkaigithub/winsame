@@ -139,103 +139,11 @@ namespace winsame
         /// 文本相似度阈值
         /// </summary>
         public static double TEXTTHRESHOLD = 0.8;
+        public static long PRIME = (long)1111111111111111111;
+        public static int HASHSTEP = 5;
     }
     #endregion
-    #region StringFunction
-    /// <summary>
-    /// 字符串处理类
-    /// </summary>
-    public static class StringFunctions
-    {
-        /// <summary>
-        /// 将形如[][][]的文件名切割成字符串数组
-        /// </summary>
-        /// <param name="input">输入的完整文件名</param>
-        /// <returns></returns>
-        public static string[] mysplit(string input)
-        {
-            string[] now = new string[7];
-            int pos = 0;
-            for (int i = 0; i < 7; ++i)
-            {
-                pos++;
-                while (input[pos] != ']') now[i] = now[i] + input[pos++];
-                pos++;
-            }
-            return now;
-        }
-        /// <summary>
-        /// 将形如"xxx-yyy"的字符串分割成两个字符串
-        /// </summary>
-        /// <param name="input">输入的待分割字符串</param>
-        /// <returns></returns>
-        public static string[] splitagain(string input)
-        {
-            return input.Split('-');
-        }
-        /// <summary>
-        /// 字符串转int
-        /// </summary>
-        /// <param name="time">输入的字符串</param>
-        /// <returns></returns>
-        public static int stringtoint(string time)
-        {
-            int pos = 0, ans = 0;
-            while (Char.IsNumber(time[pos]))
-            {
-                ans = ans * 10 + time[pos++];
-            }
-            return ans;
-        }
-        /// <summary>
-        /// 删除字符串空白字符
-        /// </summary>
-        /// <param name="text">输入的待删除文本</param>
-        /// <returns>删除后的结果</returns>
-        public static string deleteEmpty(string text)
-        {
-            string temp = text;
-            for (char c = (char)0; c < (char)256; ++c)
-                if (Char.IsWhiteSpace(c)) temp = temp.Replace(c + "", "");
-            return temp;
-        }
-        /// <summary>
-        /// 计算两个文本的相似度
-        /// 使用编辑距离算法
-        /// </summary>
-        /// <param name="text1">第一个文本</param>
-        /// <param name="text2">第二个文本</param>
-        /// <returns>计算后的比例，在[0..1]范围内</returns>
-        public static double calstringsim(string text1, string text2)
-        {
-            int len1 = text1.Length;
-            int len2 = text2.Length;
-            int[,] dp = new int[len1, len2];
-            for (int i = 0; i < len1; ++i)
-                for (int j = 0; j < len2; ++j)
-                {
-                    dp[i, j] = len1 + len2;
-                    if (i == 0 && j == 0)
-                    {
-                        dp[i, j] = 0;
-                    }
-                    else
-                    {
-                        if (i > 0) dp[i, j] = Math.Min(dp[i - 1, j] + 1, dp[i, j]);
-                        if (j > 0) dp[i, j] = Math.Min(dp[i, j - 1] + 1, dp[i, j]);
-                        if (i > 0 && j > 0)
-                        {
-                            if (text1[i] != text2[j]) dp[i, j] = Math.Min(dp[i - 1, j - 1] + 1, dp[i, j]);
-                            else dp[i, j] = Math.Min(dp[i - 1, j - 1], dp[i, j]);
-                        }
-                    }
-                }
-            double dif = dp[len1 - 1, len2 - 1];
-            dif /= (double)Math.Max(len1, len2);
-            return 1 - dif;
-        }
-    }
-    #endregion
+    
     #region FileOpr
     /// <summary>
     /// 文件操作类
@@ -380,7 +288,8 @@ namespace winsame
             return res;
         }
         /// <summary>
-        /// 相似度计算方法，代码核心，调参数的理想之地
+        /// 相似度计算方法，代码核心
+        /// 综合两种文本相似度计算方法，召回率更高
         /// </summary>
         /// <param name="other">另一个自定义类型</param>
         /// <returns>计算得到的相似度，在[0..1]范围内</returns>
@@ -390,7 +299,7 @@ namespace winsame
             double memsim = (double)Math.Min(other.memory, memory) / (double)Math.Max(other.memory, memory);
             double timesim = (double)Math.Min(other.time, time) / (double)Math.Max(other.time, time);
             if (memsim < Consts.MEMTHRESHOLD || timesim < Consts.TIMETHRESHOLD) return memsim * timesim * 0.5;
-            double textsim = StringFunctions.calstringsim(other.text, text);
+            double textsim = Math.Max(StringFunctions.calstringsim2(other.text, text), StringFunctions.calstringsim(other.text, text));
             return textsim * memsim * timesim;
         }
     }
