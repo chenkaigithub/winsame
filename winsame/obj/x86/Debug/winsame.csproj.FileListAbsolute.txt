@@ -12,3 +12,5 @@ C:\Users\barty\Documents\Visual Studio 2010\Projects\winsame\winsame\obj\x86\Deb
 C:\Users\barty\Documents\Visual Studio 2010\Projects\winsame\winsame\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Users\barty\Documents\Visual Studio 2010\Projects\winsame\winsame\obj\x86\Debug\winsame.exe
 C:\Users\barty\Documents\Visual Studio 2010\Projects\winsame\winsame\obj\x86\Debug\winsame.pdb
+F:\winsame\winsame\obj\x86\Debug\winsame.exe
+F:\winsame\winsame\obj\x86\Debug\winsame.pdb

@@ -100,6 +100,12 @@ namespace winsame
             dif /= (double)(len1 + len2);
             return 1 - dif;
         }
+        /// <summary>
+        /// 散列Hash方法
+        /// </summary>
+        /// <param name="text">待hash的文本</param>
+        /// <param name="q">步长</param>
+        /// <returns>散列hash数组</returns>
         private static long[] gethash(string text, int q)
         {
             int len = text.Length;
